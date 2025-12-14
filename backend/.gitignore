@@ -1,0 +1,31 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# AWS Lambda deployment artifacts
+dist/
+build/
+*.zip
+
+# Environment variables (never commit secrets)
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+
+# AWS SAM and Serverless Framework
+.aws-sam/
+.serverless/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
