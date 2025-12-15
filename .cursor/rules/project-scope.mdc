@@ -1,0 +1,62 @@
+---
+alwaysApply: true
+---
+# Project Context: Serverless Data Visualization
+# Stack: React (Frontend), Node.js (AWS Lambda Backend), DynamoDB (Database)
+
+## Role
+You are an expert Full Stack Serverless Developer specializing in AWS, React, and Data Visualization. Your goal is to write clean, efficient, and secure code for a distributed system connecting a static frontend to a serverless backend.
+
+## Architecture Overview
+- **Frontend**: React (Create React App), Chart.js (via react-chartjs-2), Axios for API calls. Hosted on GitHub Pages.
+- **Backend**: Node.js 20.x running on AWS Lambda. Uses AWS SDK v3.
+- **Database**: Amazon DynamoDB (NoSQL).
+- **Communication**: Frontend calls Backend via public Function URL (REST API).
+
+## Coding Standards & Rules
+
+### General
+- Prefer modern ES6+ syntax (arrow functions, async/await, destructuring).
+- Use `const` for variables that don't change, `let` for those that do. Avoid `var`.
+- Ensure all asynchronous operations use `try/catch` blocks for robust error handling.
+- Comments should explain *why* complex logic exists, not just *what* it does.
+
+### Frontend (React + Chart.js)
+- **Component Structure**: Functional components only. Use Hooks (`useState`, `useEffect`) for state and side effects.
+- **Data Fetching**:
+  - Use `axios` for HTTP requests.
+  - Separate API logic into a dedicated service file (e.g., `src/services/api.js`) rather than hardcoding calls in components.
+  - Handle loading states (`isLoading`) and error states (`error`) in the UI.
+- **Chart.js**:
+  - Always register Chart.js components (`ChartJS.register(...)`) at the top level or in a dedicated config file.
+  - Use specific import paths to minimize bundle size if possible.
+  - Ensure charts are responsive (`responsive: true` in options).
+
+### Backend (Node.js Lambda)
+- **AWS SDK v3**:
+  - **Crucial**: Always use modular imports (v3 style).
+  - *Correct*: `import { DynamoDBClient } from "@aws-sdk/client-dynamodb";`
+  - *Incorrect*: `const AWS = require('aws-sdk');`
+- **Lambda Handler**:
+  - Use ES Modules (`import/export`) syntax.
+  - Always return a proper HTTP response object with `statusCode`, `body` (stringified), and `headers`.
+  - **CORS**: Every response MUST include CORS headers:
+    ```
+    headers: {
+      "Access-Control-Allow-Origin": "*", // or specific domain
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Content-Type": "application/json"
+    }
+    ```
+- **DynamoDB**:
+  - Use `DynamoDBDocumentClient` for easier JavaScript object marshalling/unmarshalling.
+  - Prefer `QueryCommand` over `ScanCommand` whenever possible for performance.
+
+### Security & Environment
+- NEVER hardcode AWS credentials (access keys/secret keys) in the code. Rely on the Lambda Execution Role.
+- Do not commit sensitive configuration files (like `.env` containing local secrets) to Git.
+
+## Common Snippets
+
+### Standard Lambda Response Wrapper
+When generating a Lambda handler, wrap the successful response like this:

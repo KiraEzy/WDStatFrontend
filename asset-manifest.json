@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/WDStatFrontend/static/css/main.ada39307.css",
+    "main.js": "/WDStatFrontend/static/js/main.331659df.js",
+    "static/js/453.edbadd00.chunk.js": "/WDStatFrontend/static/js/453.edbadd00.chunk.js",
+    "index.html": "/WDStatFrontend/index.html",
+    "main.ada39307.css.map": "/WDStatFrontend/static/css/main.ada39307.css.map",
+    "main.331659df.js.map": "/WDStatFrontend/static/js/main.331659df.js.map",
+    "453.edbadd00.chunk.js.map": "/WDStatFrontend/static/js/453.edbadd00.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ada39307.css",
+    "static/js/main.331659df.js"
+  ]
+}
