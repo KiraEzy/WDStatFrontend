@@ -9,17 +9,27 @@
     "deploy": "bash scripts/deploy.sh",
     "seed": "node scripts/seed-data.js",
     "test-lambda": "node scripts/test-lambda.js",
-    "package": "zip -r function.zip . -x '*.git*' -x '*node_modules/.cache*' -x '*.zip' -x '*scripts*' -x '*SETUP.md' -x '*template.yaml' -x '*lambda-policy.json'"
+    "package": "node scripts/package.js",
+    "package:win": "powershell -Command \"Compress-Archive -Path functions,lib,node_modules,package.json -DestinationPath function.zip -Force\"",
+    "package:unix": "zip -r function.zip . -x '*.git*' -x '*node_modules/.cache*' -x '*.zip' -x '*scripts*' -x '*SETUP.md' -x '*template.yaml' -x '*lambda-policy.json'"
   },
-  "keywords": ["aws", "lambda", "dynamodb", "serverless"],
+  "keywords": [
+    "aws",
+    "lambda",
+    "dynamodb",
+    "serverless"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0",
-    "@aws-sdk/client-lambda": "^3.0.0"
+    "@aws-sdk/client-lambda": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1"
   }
 }
