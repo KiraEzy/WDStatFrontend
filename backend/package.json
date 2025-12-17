@@ -5,14 +5,19 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "bash scripts/deploy.sh",
+    "seed": "node scripts/seed-data.js",
+    "test-lambda": "node scripts/test-lambda.js",
+    "package": "zip -r function.zip . -x '*.git*' -x '*node_modules/.cache*' -x '*.zip' -x '*scripts*' -x '*SETUP.md' -x '*template.yaml' -x '*lambda-policy.json'"
   },
   "keywords": ["aws", "lambda", "dynamodb", "serverless"],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0"
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "@aws-sdk/client-lambda": "^3.0.0"
   },
   "engines": {
     "node": ">=20.0.0"

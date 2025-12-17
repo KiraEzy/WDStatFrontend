@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: WDStat Backend - World Domination Metrics DynamoDB and Lambda Functions
+
+Parameters:
+  TableName:
+    Type: String
+    Default: world_domination_metrics
+    Description: Name of the DynamoDB table
+  
+  Region:
+    Type: String
+    Default: us-east-1
+    Description: AWS Region for resources
+
+Resources:
+  # DynamoDB Table for World Domination Metrics
+  WorldDominationMetricsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: WDM_ID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: WDM_ID
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+        - Key: Project
+          Value: WDStat
+        - Key: Purpose
+          Value: GameMetrics
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: WDStatLambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBReadPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:GetItem
+                  - dynamodb:Scan
+                Resource: !GetAtt WorldDominationMetricsTable.Arn
+
+  # Lambda Function for World Domination Metrics Search
+  WorldDominationMetricsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: wdstat-world-domination-metrics
+      CodeUri: functions/
+      Handler: world-domination-metrics.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          WDM_TABLE: !Ref TableName
+          AWS_REGION: !Ref Region
+      Events:
+        FunctionUrl:
+          Type: HttpApi
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Cors:
+              AllowMethods:
+                - GET
+                - POST
+                - OPTIONS
+              AllowHeaders:
+                - Content-Type
+              AllowOrigins:
+                - '*'
+      Timeout: 30
+      MemorySize: 256
+
+Outputs:
+  WorldDominationMetricsTableName:
+    Description: Name of the DynamoDB table
+    Value: !Ref WorldDominationMetricsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-WorldDominationMetricsTable'
+
+  WorldDominationMetricsFunctionUrl:
+    Description: Function URL for world domination metrics endpoint
+    Value: !GetAtt WorldDominationMetricsFunction.FunctionUrl
+    Export:
+      Name: !Sub '${AWS::StackName}-MetricsUrl'
+
+  LambdaFunctionArn:
+    Description: ARN of the Lambda function
+    Value: !GetAtt WorldDominationMetricsFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaArn'
+

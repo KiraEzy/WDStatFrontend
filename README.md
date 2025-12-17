@@ -98,34 +98,46 @@ WDStat/
 
 ### Database Schema
 
-Example DynamoDB item structure for attendance data:
+DynamoDB table structure for world domination metrics:
+
+**Table**: `world_domination_metrics`
+
 ```json
 {
-  "date": "2024-01-01",
-  "employeeId": "EMP001",
-  "department": "Engineering",
-  "status": "present",
-  "timestamp": "2024-01-01T09:00:00Z"
+  "WDM_ID": "120120301230",
+  "WDM_playing_as": "CAN",
+  "WDM_record_game_date": "1940-08-21",
+  "WDM_start_wd_game_date": "1939-12-01",
+  "WDM_Update_datetime": "2024-01-01T09:00:00Z",
+  "WDM_Create_datetime": "2024-01-01T09:00:00Z"
 }
 ```
 
 ## 📊 Available Endpoints
 
-### GET /attendance/search
-Search attendance records with optional filters.
+### GET /
+Search world domination metrics with optional filters.
 
 **Query Parameters:**
-- `date` (required): Date in YYYY-MM-DD format
-- `employeeId` (optional): Filter by specific employee
-- `department` (optional): Filter by department
+- `WDM_ID` (optional): Specific metric ID
+- `WDM_playing_as` (optional): Filter by country code (e.g., CAN, USA, GER)
+- `startDate` (optional): Filter by game date (>=)
+- `endDate` (optional): Filter by game date (<=)
 
 **Response:**
 ```json
 {
   "success": true,
-  "data": [...],
-  "count": 50,
-  "message": "Attendance data retrieved successfully"
+  "data": [{
+    "WDM_ID": "120120301230",
+    "WDM_playing_as": "CAN",
+    "WDM_record_game_date": "1940-08-21",
+    "WDM_start_wd_game_date": "1939-12-01",
+    "WDM_Update_datetime": "2024-01-01T09:00:00Z",
+    "WDM_Create_datetime": "2024-01-01T09:00:00Z"
+  }],
+  "count": 1,
+  "message": "World domination metrics retrieved successfully"
 }
 ```
 
@@ -146,22 +158,31 @@ Search attendance records with optional filters.
 
 ### Backend Deployment (AWS Lambda)
 
-1. **Package the function:**
+**📖 For detailed setup instructions, see [backend/SETUP.md](./backend/SETUP.md)**
+
+**Quick Start:**
+1. **Create DynamoDB Table** - See `backend/SETUP.md` Step 1
+2. **Create IAM Role** - See `backend/SETUP.md` Step 2
+3. **Deploy Lambda Function:**
    ```bash
    cd backend
-   zip -r function.zip .
+   npm install
+   npm run package  # Creates function.zip
+   # Then upload via AWS Console or use npm run deploy
    ```
-
-2. **Deploy via AWS Console:**
-   - Upload the ZIP file to Lambda
-   - Configure environment variables
-   - Set up Function URL with CORS enabled
-
-3. **Alternative: AWS SAM**
+4. **Configure Function URL** - Enable CORS and copy the URL
+5. **Seed Sample Data:**
    ```bash
-   # Create template.yaml and use SAM CLI
-   sam deploy --guided
+   export ATTENDANCE_TABLE=attendance-table
+   npm run seed
    ```
+
+**Alternative: AWS SAM (Infrastructure as Code)**
+```bash
+cd backend
+sam build
+sam deploy --guided
+```
 
 ## 🔒 Security Considerations
 

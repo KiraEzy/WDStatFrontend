@@ -67,9 +67,21 @@ export const apiService = {
     }
   },
 
-  // Example function for attendance/search endpoint
-  async searchAttendance(searchParams) {
-    return this.getData('/attendance/search', searchParams);
+  // World Domination Metrics endpoints
+  async getMetrics(searchParams) {
+    return this.getData('/', searchParams);
+  },
+
+  async getMetricsByCountry(countryCode) {
+    return this.getData('/', { WDM_playing_as: countryCode });
+  },
+
+  async getMetricsById(wdmId) {
+    return this.getData('/', { WDM_ID: wdmId });
+  },
+
+  async getMetricsByDateRange(startDate, endDate) {
+    return this.getData('/', { startDate, endDate });
   },
 
   // Add more API functions as needed for your specific endpoints
