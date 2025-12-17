@@ -149,7 +149,7 @@ npm run package
    - Auth type: **"NONE"** (for public access)
    - Configure CORS: ✅ Check "Configure cross-origin resource sharing (CORS)"
      - Allow origins: `*` (or your specific domain like `https://kiraezy.github.io`)
-     - Allow methods: Select **GET**, **POST**, **OPTION** (note: singular "OPTION" not "OPTIONS")
+     - Allow methods: Select **GET**, **HEAD**, **POST** (OPTIONS is automatically handled by AWS)
      - Allow headers: `Content-Type` (or `*` for all headers)
      - Max age: `86400` (optional)
    - Click **"Save"**

@@ -46,7 +46,7 @@ aws dynamodb create-table \
 6. Create Function URL:
    - Auth: NONE
    - CORS: Check "Configure CORS"
-   - Allow methods: GET, POST, OPTION (note: "OPTION" singular in AWS Console)
+   - Allow methods: GET, HEAD, POST (OPTIONS handled automatically)
 7. **Copy the Function URL!**
 
 **Option B: Using AWS SAM**
