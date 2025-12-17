@@ -138,9 +138,10 @@ npm run package
    - Go to **"Configuration"** tab → **"Environment variables"**
    - Click **"Edit"**
    - Add:
-     - `WDM_TABLE`: `world_domination_metrics`
-     - `AWS_REGION`: `us-east-1` (or your region)
+     - Key: `WDM_TABLE`, Value: `world_domination_metrics`
    - Click **"Save"**
+   
+   > **Note**: Do NOT set `AWS_REGION` - Lambda provides this automatically!
 
 5. **Configure Function URL**
    - Go to **"Configuration"** tab → **"Function URL"**
@@ -163,7 +164,7 @@ aws lambda create-function \
     --role arn:aws:iam::YOUR_ACCOUNT_ID:role/WDStatLambdaExecutionRole \
     --handler world-domination-metrics.handler \
     --zip-file fileb://function.zip \
-    --environment Variables="{WDM_TABLE=world_domination_metrics,AWS_REGION=us-east-1}" \
+    --environment Variables="{WDM_TABLE=world_domination_metrics}" \
     --region us-east-1
 
 # Create Function URL
@@ -316,7 +317,7 @@ aws lambda update-function-code \
 # Update environment variables
 aws lambda update-function-configuration \
     --function-name wdstat-world-domination-metrics \
-    --environment Variables="{WDM_TABLE=world_domination_metrics,AWS_REGION=us-east-1}"
+    --environment Variables="{WDM_TABLE=world_domination_metrics}"
 ```
 
 ## Next Steps

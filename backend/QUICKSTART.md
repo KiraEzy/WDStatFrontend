@@ -40,9 +40,9 @@ aws dynamodb create-table \
    # Upload function.zip via console
    ```
 4. Configure handler: `world-domination-metrics.handler`
-5. Set environment variables:
-   - `WDM_TABLE=world_domination_metrics`
-   - `AWS_REGION=us-east-1`
+5. Set environment variable:
+   - Key: `WDM_TABLE`, Value: `world_domination_metrics`
+   - **Don't set AWS_REGION** - it's automatically provided!
 6. Create Function URL (Auth: NONE, Enable CORS)
 7. **Copy the Function URL!**
 
@@ -56,6 +56,12 @@ sam deploy --guided
 ### 4. Seed Sample Data
 
 ```bash
+# Windows PowerShell
+$env:WDM_TABLE="world_domination_metrics"
+$env:AWS_REGION="us-east-1"
+npm run seed
+
+# Or Linux/Mac
 export WDM_TABLE=world_domination_metrics
 export AWS_REGION=us-east-1
 npm run seed
@@ -64,6 +70,11 @@ npm run seed
 ### 5. Test Lambda
 
 ```bash
+# Windows PowerShell
+$env:LAMBDA_FUNCTION_NAME="wdstat-world-domination-metrics"
+npm run test-lambda
+
+# Or Linux/Mac
 export LAMBDA_FUNCTION_NAME=wdstat-world-domination-metrics
 npm run test-lambda
 ```

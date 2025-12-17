@@ -72,7 +72,6 @@ Resources:
       Environment:
         Variables:
           WDM_TABLE: !Ref TableName
-          AWS_REGION: !Ref Region
       Events:
         FunctionUrl:
           Type: HttpApi
