@@ -147,10 +147,11 @@ npm run package
    - Go to **"Configuration"** tab → **"Function URL"**
    - Click **"Create function URL"**
    - Auth type: **"NONE"** (for public access)
-   - Configure CORS:
-     - Allow origins: `*` (or your specific domain)
-     - Allow methods: `GET, POST, OPTIONS`
-     - Allow headers: `Content-Type`
+   - Configure CORS: ✅ Check "Configure cross-origin resource sharing (CORS)"
+     - Allow origins: `*` (or your specific domain like `https://kiraezy.github.io`)
+     - Allow methods: Select **GET**, **POST**, **OPTION** (note: singular "OPTION" not "OPTIONS")
+     - Allow headers: `Content-Type` (or `*` for all headers)
+     - Max age: `86400` (optional)
    - Click **"Save"**
    - **Copy the Function URL** - you'll need this for the frontend!
 

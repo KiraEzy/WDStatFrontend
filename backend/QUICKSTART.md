@@ -43,7 +43,10 @@ aws dynamodb create-table \
 5. Set environment variable:
    - Key: `WDM_TABLE`, Value: `world_domination_metrics`
    - **Don't set AWS_REGION** - it's automatically provided!
-6. Create Function URL (Auth: NONE, Enable CORS)
+6. Create Function URL:
+   - Auth: NONE
+   - CORS: Check "Configure CORS"
+   - Allow methods: GET, POST, OPTION (note: "OPTION" singular in AWS Console)
 7. **Copy the Function URL!**
 
 **Option B: Using AWS SAM**
