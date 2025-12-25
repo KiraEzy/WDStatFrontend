@@ -115,7 +115,7 @@ DynamoDB table structure for world domination metrics:
 
 ## 📊 Available Endpoints
 
-### GET /
+### GET / (Search)
 Search world domination metrics with optional filters.
 
 **Query Parameters:**
@@ -138,6 +138,66 @@ Search world domination metrics with optional filters.
   }],
   "count": 1,
   "message": "World domination metrics retrieved successfully"
+}
+```
+
+### GET / (Count by Country)
+Get counts of records grouped by `WDM_playing_as` (country code).
+
+**Query Parameters:**
+- `startDate` (optional): Filter records with `WDM_record_game_date >= startDate`
+- `endDate` (optional): Filter records with `WDM_record_game_date <= endDate`
+
+**Function URL**: `https://kyz2mgoyhedxkbbghhe4xkj5ue0xzden.lambda-url.ap-east-1.on.aws`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    { "WDM_playing_as": "CAN", "count": 5 },
+    { "WDM_playing_as": "USA", "count": 3 },
+    { "WDM_playing_as": "GER", "count": 2 }
+  ],
+  "summary": {
+    "total_records": 10,
+    "total_countries": 3,
+    "counts_by_country": {
+      "CAN": 5,
+      "USA": 3,
+      "GER": 2
+    }
+  },
+  "message": "World domination metrics counts retrieved successfully"
+}
+```
+
+### POST / (Create)
+Create a new world domination metrics record.
+
+**Request Body:**
+```json
+{
+  "WDM_ID": "120120301238",
+  "WDM_playing_as": "CAN",
+  "WDM_record_game_date": "1940-08-21",
+  "WDM_start_wd_game_date": "1939-12-01"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "World domination metrics record created successfully",
+  "data": {
+    "WDM_ID": "120120301238",
+    "WDM_playing_as": "CAN",
+    "WDM_record_game_date": "1940-08-21",
+    "WDM_start_wd_game_date": "1939-12-01",
+    "WDM_Create_datetime": "2024-01-01T12:00:00.000Z",
+    "WDM_Update_datetime": "2024-01-01T12:00:00.000Z"
+  }
 }
 ```
 

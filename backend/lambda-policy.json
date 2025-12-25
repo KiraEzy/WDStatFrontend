@@ -6,7 +6,8 @@
       "Action": [
         "dynamodb:Query",
         "dynamodb:GetItem",
-        "dynamodb:Scan"
+        "dynamodb:Scan",
+        "dynamodb:PutItem"
       ],
       "Resource": "arn:aws:dynamodb:*:*:table/world_domination_metrics"
     },

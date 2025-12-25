@@ -1,0 +1,609 @@
+{
+	"info": {
+		"_postman_id": "wdstat-api-collection",
+		"name": "WDStat API - World Domination Metrics",
+		"description": "Postman collection for testing WDStat Lambda endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Record",
+			"item": [
+				{
+					"name": "Create Record - Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has success flag\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"",
+									"pm.test(\"Response contains data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"    pm.expect(jsonData.data.WDM_ID).to.exist;",
+									"    pm.expect(jsonData.data.WDM_playing_as).to.exist;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"// Save the created WDM_ID for later use",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"last_created_wdm_id\", jsonData.data.WDM_ID);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"WDM_ID\": \"{{$randomInt}}\",\n  \"WDM_playing_as\": \"CAN\",\n  \"WDM_record_game_date\": \"1940-08-21\",\n  \"WDM_start_wd_game_date\": \"1939-12-01\"\n}"
+						},
+						"url": {
+							"raw": "{{create_endpoint_url}}",
+							"host": [
+								"{{create_endpoint_url}}"
+							]
+						},
+						"description": "Creates a new world domination metrics record. Uses random WDM_ID to avoid conflicts."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Record - Missing WDM_ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message mentions WDM_ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('WDM_ID');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"WDM_playing_as\": \"CAN\",\n  \"WDM_record_game_date\": \"1940-08-21\",\n  \"WDM_start_wd_game_date\": \"1939-12-01\"\n}"
+						},
+						"url": {
+							"raw": "{{create_endpoint_url}}",
+							"host": [
+								"{{create_endpoint_url}}"
+							]
+						},
+						"description": "Tests validation error when WDM_ID is missing"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Record - Missing WDM_playing_as",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message mentions WDM_playing_as\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('WDM_playing_as');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"WDM_ID\": \"120120301240\",\n  \"WDM_record_game_date\": \"1940-08-21\",\n  \"WDM_start_wd_game_date\": \"1939-12-01\"\n}"
+						},
+						"url": {
+							"raw": "{{create_endpoint_url}}",
+							"host": [
+								"{{create_endpoint_url}}"
+							]
+						},
+						"description": "Tests validation error when WDM_playing_as is missing"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Record - Invalid JSON",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message mentions JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include('json');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"WDM_ID\": \"invalid json here"
+						},
+						"url": {
+							"raw": "{{create_endpoint_url}}",
+							"host": [
+								"{{create_endpoint_url}}"
+							]
+						},
+						"description": "Tests error handling for invalid JSON"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Record - With Custom Timestamps",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Custom timestamps are preserved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.WDM_Create_datetime).to.eql('2024-01-01T10:00:00Z');",
+									"    pm.expect(jsonData.data.WDM_Update_datetime).to.eql('2024-01-01T10:00:00Z');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"WDM_ID\": \"{{$randomInt}}\",\n  \"WDM_playing_as\": \"USA\",\n  \"WDM_record_game_date\": \"1941-12-07\",\n  \"WDM_start_wd_game_date\": \"1939-09-01\",\n  \"WDM_Create_datetime\": \"2024-01-01T10:00:00Z\",\n  \"WDM_Update_datetime\": \"2024-01-01T10:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{create_endpoint_url}}",
+							"host": [
+								"{{create_endpoint_url}}"
+							]
+						},
+						"description": "Creates a record with custom timestamps instead of auto-generated ones"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for creating new world domination metrics records"
+		},
+		{
+			"name": "Search Records",
+			"item": [
+				{
+					"name": "Search - Get All Records",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success flag\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"",
+									"pm.test(\"Response contains data array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response has count\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.count).to.be.a('number');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{search_endpoint_url}}",
+							"host": [
+								"{{search_endpoint_url}}"
+							]
+						},
+						"description": "Retrieves all world domination metrics records"
+					},
+					"response": []
+				},
+				{
+					"name": "Search - Filter by Country",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All results match country filter\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.length > 0) {",
+									"        jsonData.data.forEach(function(item) {",
+									"            pm.expect(item.WDM_playing_as).to.eql('CAN');",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{search_endpoint_url}}?WDM_playing_as=CAN",
+							"host": [
+								"{{search_endpoint_url}}"
+							],
+							"query": [
+								{
+									"key": "WDM_playing_as",
+									"value": "CAN"
+								}
+							]
+						},
+						"description": "Searches for records filtered by country code"
+					},
+					"response": []
+				},
+				{
+					"name": "Search - Filter by WDM_ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns specific record\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.length > 0) {",
+									"        pm.expect(jsonData.data[0].WDM_ID).to.eql('120120301230');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{search_endpoint_url}}?WDM_ID=120120301230",
+							"host": [
+								"{{search_endpoint_url}}"
+							],
+							"query": [
+								{
+									"key": "WDM_ID",
+									"value": "120120301230"
+								}
+							]
+						},
+						"description": "Searches for a specific record by WDM_ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Search - Filter by Date Range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All results are within date range\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.length > 0) {",
+									"        var startDate = '1940-01-01';",
+									"        var endDate = '1941-12-31';",
+									"        jsonData.data.forEach(function(item) {",
+									"            pm.expect(item.WDM_record_game_date).to.be.at.least(startDate);",
+									"            pm.expect(item.WDM_record_game_date).to.be.at.most(endDate);",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{search_endpoint_url}}?startDate=1940-01-01&endDate=1941-12-31",
+							"host": [
+								"{{search_endpoint_url}}"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "1940-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "1941-12-31"
+								}
+							]
+						},
+						"description": "Searches for records within a date range"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for searching and filtering world domination metrics records"
+		},
+		{
+			"name": "CORS Tests",
+			"item": [
+				{
+					"name": "OPTIONS Preflight Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"CORS headers are present\", function () {",
+									"    pm.expect(pm.response.headers.get('Access-Control-Allow-Origin')).to.exist;",
+									"    pm.expect(pm.response.headers.get('Access-Control-Allow-Methods')).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "https://example.com"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "POST"
+							}
+						],
+						"url": {
+							"raw": "{{create_endpoint_url}}",
+							"host": [
+								"{{create_endpoint_url}}"
+							]
+						},
+						"description": "Tests CORS preflight request"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for CORS functionality"
+		},
+		{
+			"name": "Count Records",
+			"item": [
+				{
+					"name": "Count All - Grouped by Country",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success flag\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"",
+									"pm.test(\"Response contains data array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response contains summary\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary).to.be.an('object');",
+									"    pm.expect(jsonData.summary.total_records).to.be.a('number');",
+									"    pm.expect(jsonData.summary.total_countries).to.be.a('number');",
+									"});",
+									"",
+									"pm.test(\"Each item has WDM_playing_as and count\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.length > 0) {",
+									"        jsonData.data.forEach(function(item) {",
+									"            pm.expect(item.WDM_playing_as).to.exist;",
+									"            pm.expect(item.count).to.be.a('number');",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{count_endpoint_url}}",
+							"host": [
+								"{{count_endpoint_url}}"
+							]
+						},
+						"description": "Gets counts of all records grouped by country code"
+					},
+					"response": []
+				},
+				{
+					"name": "Count with Date Filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success flag\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"",
+									"pm.test(\"Summary total matches sum of counts\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var sum = 0;",
+									"    if (jsonData.data) {",
+									"        jsonData.data.forEach(function(item) {",
+									"            sum += item.count;",
+									"        });",
+									"    }",
+									"    pm.expect(jsonData.summary.total_records).to.eql(sum);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{count_endpoint_url}}?startDate=1940-01-01&endDate=1941-12-31",
+							"host": [
+								"{{count_endpoint_url}}"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "1940-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "1941-12-31"
+								}
+							]
+						},
+						"description": "Gets counts filtered by date range"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for counting records grouped by country"
+		}
+	],
+	"variable": [
+		{
+			"key": "create_endpoint_url",
+			"value": "https://YOUR_FUNCTION_URL.lambda-url.us-east-1.on.aws",
+			"type": "string"
+		},
+		{
+			"key": "search_endpoint_url",
+			"value": "https://YOUR_FUNCTION_URL.lambda-url.us-east-1.on.aws",
+			"type": "string"
+		},
+		{
+			"key": "count_endpoint_url",
+			"value": "https://kyz2mgoyhedxkbbghhe4xkj5ue0xzden.lambda-url.ap-east-1.on.aws",
+			"type": "string"
+		}
+	]
+}
+
+

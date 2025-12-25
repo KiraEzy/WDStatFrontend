@@ -84,6 +84,39 @@ export const apiService = {
     return this.getData('/', { startDate, endDate });
   },
 
+  // Count endpoint - get counts grouped by country
+  async getMetricsCount(startDate, endDate) {
+    const params = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    
+    // Use the count endpoint URL directly
+    const countUrl = process.env.REACT_APP_COUNT_API_URL || 'https://kyz2mgoyhedxkbbghhe4xkj5ue0xzden.lambda-url.ap-east-1.on.aws';
+    
+    try {
+      const response = await axios.get(countUrl, { 
+        params,
+        timeout: 10000,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      // Enhanced error logging for debugging
+      if (error.response) {
+        console.error('API Error Response:', error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error('Network Error - No response received:', error.request);
+        console.error('Request URL:', countUrl);
+        console.error('Request Params:', params);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
+      throw error;
+    }
+  },
+
   // Add more API functions as needed for your specific endpoints
 };
 

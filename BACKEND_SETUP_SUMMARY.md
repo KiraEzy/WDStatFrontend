@@ -79,16 +79,26 @@ Then in AWS Lambda Console:
 - Runtime: Node.js 20.x
 - Upload `function.zip`
 - Handler: `world-domination-metrics.handler`
-- Set environment variables:
+- Set environment variable:
   - `WDM_TABLE=world_domination_metrics`
-  - `AWS_REGION=us-east-1`
-- Create Function URL (Auth: NONE, Enable CORS)
+  - **Don't set AWS_REGION** - Lambda provides it automatically!
+- Create Function URL:
+  - Auth: NONE
+  - Enable CORS: ✅ Check
+  - Allow methods: GET, HEAD, POST (OPTIONS handled automatically by AWS)
 - **Copy the Function URL**
 
 ### 4. Seed Sample Data
 
 ```bash
 cd backend
+
+# Windows PowerShell
+$env:WDM_TABLE="world_domination_metrics"
+$env:AWS_REGION="us-east-1"
+npm run seed
+
+# Or Linux/Mac
 export WDM_TABLE=world_domination_metrics
 export AWS_REGION=us-east-1
 npm run seed
@@ -99,6 +109,11 @@ This will add 8 sample game records (CAN, USA, GER, SOV, UK, JAP, ITA, FRA).
 ### 5. Test Lambda
 
 ```bash
+# Windows PowerShell
+$env:LAMBDA_FUNCTION_NAME="wdstat-world-domination-metrics"
+npm run test-lambda
+
+# Or Linux/Mac
 export LAMBDA_FUNCTION_NAME=wdstat-world-domination-metrics
 npm run test-lambda
 ```

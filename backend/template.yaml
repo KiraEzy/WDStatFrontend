@@ -49,7 +49,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-        - PolicyName: DynamoDBReadPolicy
+        - PolicyName: DynamoDBReadWritePolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -58,6 +58,7 @@ Resources:
                   - dynamodb:Query
                   - dynamodb:GetItem
                   - dynamodb:Scan
+                  - dynamodb:PutItem
                 Resource: !GetAtt WorldDominationMetricsTable.Arn
 
   # Lambda Function for World Domination Metrics Search
@@ -90,6 +91,64 @@ Resources:
       Timeout: 30
       MemorySize: 256
 
+  # Lambda Function for World Domination Metrics Create
+  WorldDominationMetricsCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: wdstat-world-domination-metrics-create
+      CodeUri: functions/
+      Handler: world-domination-metrics-create.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          WDM_TABLE: !Ref TableName
+      Events:
+        FunctionUrl:
+          Type: HttpApi
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Cors:
+              AllowMethods:
+                - POST
+                - OPTIONS
+              AllowHeaders:
+                - Content-Type
+              AllowOrigins:
+                - '*'
+      Timeout: 30
+      MemorySize: 256
+
+  # Lambda Function for World Domination Metrics Count (Grouped by Country)
+  WorldDominationMetricsCountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: wdstat-world-domination-metrics-count
+      CodeUri: functions/
+      Handler: world-domination-metrics-count.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          WDM_TABLE: !Ref TableName
+      Events:
+        FunctionUrl:
+          Type: HttpApi
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Cors:
+              AllowMethods:
+                - GET
+                - OPTIONS
+              AllowHeaders:
+                - Content-Type
+              AllowOrigins:
+                - '*'
+      Timeout: 30
+      MemorySize: 256
+
 Outputs:
   WorldDominationMetricsTableName:
     Description: Name of the DynamoDB table
@@ -108,4 +167,28 @@ Outputs:
     Value: !GetAtt WorldDominationMetricsFunction.Arn
     Export:
       Name: !Sub '${AWS::StackName}-LambdaArn'
+
+  WorldDominationMetricsCreateFunctionUrl:
+    Description: Function URL for world domination metrics create endpoint
+    Value: !GetAtt WorldDominationMetricsCreateFunction.FunctionUrl
+    Export:
+      Name: !Sub '${AWS::StackName}-MetricsCreateUrl'
+
+  LambdaCreateFunctionArn:
+    Description: ARN of the create Lambda function
+    Value: !GetAtt WorldDominationMetricsCreateFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaCreateArn'
+
+  WorldDominationMetricsCountFunctionUrl:
+    Description: Function URL for world domination metrics count endpoint
+    Value: !GetAtt WorldDominationMetricsCountFunction.FunctionUrl
+    Export:
+      Name: !Sub '${AWS::StackName}-MetricsCountUrl'
+
+  LambdaCountFunctionArn:
+    Description: ARN of the count Lambda function
+    Value: !GetAtt WorldDominationMetricsCountFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaCountArn'
 
