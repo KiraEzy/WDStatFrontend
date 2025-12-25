@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/WDStatFrontend/static/css/main.ada39307.css",
-    "main.js": "/WDStatFrontend/static/js/main.331659df.js",
+    "main.css": "/WDStatFrontend/static/css/main.79199d2a.css",
+    "main.js": "/WDStatFrontend/static/js/main.57da767e.js",
     "static/js/453.edbadd00.chunk.js": "/WDStatFrontend/static/js/453.edbadd00.chunk.js",
     "index.html": "/WDStatFrontend/index.html",
-    "main.ada39307.css.map": "/WDStatFrontend/static/css/main.ada39307.css.map",
-    "main.331659df.js.map": "/WDStatFrontend/static/js/main.331659df.js.map",
+    "main.79199d2a.css.map": "/WDStatFrontend/static/css/main.79199d2a.css.map",
+    "main.57da767e.js.map": "/WDStatFrontend/static/js/main.57da767e.js.map",
     "453.edbadd00.chunk.js.map": "/WDStatFrontend/static/js/453.edbadd00.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ada39307.css",
-    "static/js/main.331659df.js"
+    "static/css/main.79199d2a.css",
+    "static/js/main.57da767e.js"
   ]
 }
